@@ -1,8 +1,10 @@
+import { Toaster } from 'react-hot-toast'
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { AppProps } from 'next/app'
 import { DefaultSeo } from 'next-seo'
 
 import queryClient from '@/lib/tanstack-query'
+import { SessionProvider } from '@/providers/session-provider'
 
 import defaultSeo from '../../next-seo.config'
 
@@ -12,7 +14,10 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
         <QueryClientProvider client={queryClient}>
             <DefaultSeo {...defaultSeo} />
-            <Component {...pageProps} />
+            <SessionProvider>
+                <Component {...pageProps} />
+            </SessionProvider>
+            <Toaster />
         </QueryClientProvider>
     )
 }
