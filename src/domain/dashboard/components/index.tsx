@@ -5,11 +5,34 @@ import { IconStar } from 'tabler-icons'
 import withTemplate from '@/components/hocs/withTemplate'
 import { SessionContext } from '@/providers/session-provider'
 import { AppTemplate } from '@/templates/App.template'
+import { useEvents } from '@/domain/shared/use-events'
+import { Event } from '@/domain/events/schemas/events'
 
-type Props = {}
 
-const Dashboard = (props: Props) => {
+type StateDrivenCardProps = {
+    type: Event["type"]
+    data: Event
+}
+
+const StateDrivenCard = ({ type, data }: StateDrivenCardProps) => {
+    switch (type) {
+        case "numeric":
+        default:
+            return (
+                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
+                    <Text>{data.title}</Text>
+                    <Metric>{data.value}</Metric>
+                </Card>
+            )
+    }
+}
+
+
+const Dashboard = () => {
     const { user } = useContext(SessionContext)
+    const { eventsQuery } = useEvents()
+    const events = eventsQuery.data?.documents
+    const total = eventsQuery.data?.total
 
     return (
         <div className="flex flex-col h-full">
@@ -27,25 +50,9 @@ const Dashboard = (props: Props) => {
             </div>
 
             <div className="grid grid-cols-4 gap-8">
-                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
-                    <IconStar className="w-4 h-4 absolute top-6 text-neutral-400  right-6" />
-                    <Text>Users logged</Text>
-                    <Metric>4</Metric>
-                </Card>
-                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
-                    <IconStar className="w-4 h-4 absolute top-6 text-neutral-400  right-6" />
-                    <Text>Sign up</Text>
-                    <Metric>9</Metric>
-                </Card>
-                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
-                    <Text>Posts published</Text>
-                    <Metric>22</Metric>
-                </Card>
-                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
-                    <IconStar className="w-4 h-4 absolute top-6 text-neutral-400  right-6" />
-                    <Text>Posts removed</Text>
-                    <Metric>2</Metric>
-                </Card>
+                {events?.map((event) => (
+                    <StateDrivenCard key={event.$id} type={event.type} data={event} />
+                ))}
             </div>
         </div>
     )

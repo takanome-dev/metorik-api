@@ -1,9 +1,9 @@
-import { AppwriteException, Permission, Query, Role } from 'appwrite'
+import { AppwriteException, Query } from 'appwrite'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { CreateEventSchema } from '@/domain/events/schemas/events'
+import { CreateEventSchema, Event } from '@/domain/events/schemas/events'
 import appwrite, { AppwriteCollections, DATABASE_ID } from '@/lib/appwrite'
-import { presetJWT } from '@/utils/api'
+import { ApiGetResponse, presetJWT } from '@/utils/api'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req
@@ -17,8 +17,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const events = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS, [
             Query.equal('user_id', userLogged.$id),
-        ])
+        ]) as unknown as ApiGetResponse<Event>
 
+        for (const event of events.documents) {
+            const eventData = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, [
+                Query.equal('event_id', event.$id),
+            ])
+            const value = eventData.documents[0].value
+            event.value = value ? parseInt(value) : 0
+        }
         return res.status(200).json(events)
     }
 
@@ -58,7 +65,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             )
 
-            const eventHasData = await appwrite.database.createDocument(
+            await appwrite.database.createDocument(
                 DATABASE_ID,
                 AppwriteCollections.EVENTS_HAS_DATA,
                 'unique()',

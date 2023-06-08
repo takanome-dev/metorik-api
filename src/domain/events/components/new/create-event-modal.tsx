@@ -10,7 +10,7 @@ import { fadeIn } from '@/utils/animations'
 import { HTTPError } from 'ky'
 import { toast } from 'react-hot-toast'
 import { CreateEventInput, CreateEventSchema } from '../../schemas/events'
-import { useEvents } from '../use-events'
+import { useEvents } from '@/domain/shared/use-events'
 
 type ModalProps = {
     isOpen: boolean
@@ -23,6 +23,9 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
     const { createEventMutation, invalidate } = useEvents()
     const form = useForm<FormValues>({
         mode: 'onChange',
+        defaultValues: {
+            type: "numeric"
+        },
         resolver: zodResolver(CreateEventSchema),
     })
 
@@ -120,8 +123,8 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
                                         onValueChange={field.onChange}
                                     >
                                         <SelectBoxItem value="numeric" text="Numeric" icon={IconMath} />
-                                        <SelectBoxItem value="bar" text="Bar" icon={IconChartBar} />
-                                        <SelectBoxItem value="line" text="Line" icon={IconChartLine} />
+                                        {/* <SelectBoxItem disabled value="bar" text="Bar" icon={IconChartBar} /> */}
+                                        {/* <SelectBoxItem value="line" text="Line" icon={IconChartLine} /> */}
                                     </SelectBox>
                                 )
                             }}

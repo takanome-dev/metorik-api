@@ -20,4 +20,13 @@ export default class EventsService {
             .json() as Event
         return json
     }
+
+    static async dispatch(identifier: string): Promise<void> {
+        await ky.post(`/api/events/${identifier}`)
+    }
+
+    static async reset(identifier: string): Promise<void> {
+        await ky.post(`/api/events/${identifier}/reset`)
+    }
+
 }

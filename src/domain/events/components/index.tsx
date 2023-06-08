@@ -1,34 +1,17 @@
+import { Button, Card, Divider, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from '@tremor/react'
 import { useState } from 'react'
-import { Button, Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from '@tremor/react'
-import { IconDots, IconHelp, IconPlus } from 'tabler-icons'
+import { IconBolt, IconDots, IconHelp, IconPlus, IconRefresh } from 'tabler-icons'
 
 import withTemplate from '@/components/hocs/withTemplate'
 import { AppTemplate } from '@/templates/App.template'
 
-import CreateEventModal from './new/create-event-modal'
-import { useEvents } from './use-events'
 import BodyCard from '@/components/ui/BodyCard/BodyCard'
+import { useEvents } from '@/domain/shared/use-events'
+import { Menu } from '@headlessui/react'
+import { toast } from 'react-hot-toast'
+import CreateEventModal from './new/create-event-modal'
 
-const sample = [
-    {
-        id: 1,
-        name: 'User logged',
-        handle: 'user_logged',
-        type: 'numeric',
-    },
-    {
-        id: 2,
-        name: 'User signed up',
-        handle: 'user_signed_up',
-        type: 'numeric',
-    },
-    {
-        id: 3,
-        name: 'Posts created',
-        handle: 'posts_created',
-        type: 'numeric',
-    },
-]
+
 
 const cardProps = {
     heading: "Events",
@@ -36,12 +19,29 @@ const cardProps = {
 }
 
 const EventsOverview = () => {
-    const { eventsQuery } = useEvents()
+    const { eventsQuery, dispatchEventMutation, resetEventMutation, invalidate } = useEvents()
     const documents = eventsQuery.data?.documents
     const total = eventsQuery.data?.total
     const [isModalOpen, setIsModalOpen] = useState(false)
 
+    const onDispatchEvent = async (event: string) => {
+        try {
+            await dispatchEventMutation.mutateAsync(event)
+            toast.success("Event dispatched successfully")
+        } catch (err) {
+            toast.error("An error has occured while dispatching event")
+        }
+    }
 
+    const onResetEvent = async (identifier: string) => {
+        try {
+            await resetEventMutation.mutateAsync(identifier)
+            toast.success("Event reset successfully")
+            await invalidate()
+        } catch (err) {
+            toast.error("An error has occured while resetting event")
+        }
+    }
 
     if (eventsQuery.error) {
         return (
@@ -142,30 +142,89 @@ const EventsOverview = () => {
                             <IconHelp className="h-4 w-4 text-neutral-400" />
                         </TableHeaderCell>
                         <TableHeaderCell>Type</TableHeaderCell>
+                        <TableHeaderCell>Value</TableHeaderCell>
                         <TableHeaderCell></TableHeaderCell>
                     </TableHead>
                     <TableBody>
                         {!!documents?.length
-                            && documents.map((event) => (
+                            && documents.map((event) => {
+                                const isDispatching = dispatchEventMutation.isLoading && dispatchEventMutation.variables === event.identifier
+                                const isResetting = resetEventMutation.isLoading && resetEventMutation.variables === event.identifier
+                                const isProcessing = isDispatching || isResetting
 
-                                <TableRow key={event.$id}>
-                                    <TableCell>{event.title}</TableCell>
-                                    <TableCell>
-                                        <kbd className="bg-neutral-100 text-neutral-400 p-1 rounded shadow-sm">
-                                            {event.identifier}
-                                        </kbd>
-                                    </TableCell>
-                                    <TableCell>
-                                        <kbd className="bg-neutral-100 text-neutral-400 p-1 rounded shadow-sm">
-                                            {event.type}
-                                        </kbd>
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconDots className="w-4 h-4" />
-                                    </TableCell>
-                                </TableRow>
+                                return (
 
-                            ))}
+                                    <TableRow key={event.$id} className={`${isProcessing && 'blur'} transition-all duration-300 ease-out`}>
+                                        <TableCell>{event.title}</TableCell>
+                                        <TableCell>
+                                            <kbd className="bg-neutral-100 text-neutral-400 p-1 rounded shadow-sm">
+                                                {event.identifier}
+                                            </kbd>
+                                        </TableCell>
+                                        <TableCell>
+                                            <kbd className="bg-neutral-100 text-neutral-400 p-1 rounded shadow-sm">
+                                                {event.type}
+                                            </kbd>
+                                        </TableCell>
+                                        <TableCell>{event.value}</TableCell>
+                                        <TableCell className="flex relative items-center gap-x-2">
+                                            {/* <IconDots className="w-4 h-4" /> */}
+                                            <Menu>
+                                                <Menu.Button className="hover:bg-neutral-50 p-2 rounded transition-all duration-200 ease-in-out">
+                                                    <IconDots className="w-4 h-4" />
+                                                </Menu.Button>
+                                                <Menu.Items className="absolute z-10 xl:min-w-[15rem] right-8 flex-col flex gap-y-4 top-10 p-4 bg-white rounded-xl shadow-lg border border-neutral-200">
+                                                    <small>Actions</small>
+                                                    <Menu.Item>
+                                                        {({ active }) => (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => onDispatchEvent(event.identifier)}
+                                                                className={`${active && 'bg-neutral-50'} px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                                            >
+                                                                <IconBolt className="w-4 h-4 mr-2 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
+                                                                Dispatch
+                                                            </button>
+                                                        )}
+                                                    </Menu.Item>
+                                                    <hr />
+                                                    <small>Danger Zone</small>
+                                                    <Menu.Item>
+                                                        {({ active }) => (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => onResetEvent(event.identifier)}
+                                                                className={`${active && 'bg-red-50 text-red-400'}  px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                                            >
+                                                                <IconRefresh className="w-4 h-4 mr-2 group-hover:-rotate-12 transition-transform duration-300 ease-in-out" />
+                                                                Reset
+                                                            </button>
+                                                        )}
+                                                    </Menu.Item>
+                                                </Menu.Items>
+                                            </Menu>
+                                            {/* <Button
+                size="xs"
+                variant="secondary"
+                disabled={dispatchEventMutation.isLoading}
+                loading={dispatchEventMutation.isLoading}
+                onClick={() => onDispatchEvent(event.identifier)}>
+                Dispatch
+            </Button>
+            <Button
+                size="xs"
+                variant="secondary"
+                color="red"
+                disabled={resetEventMutation.isLoading}
+                loading={resetEventMutation.isLoading}
+                onClick={() => onResetEvent(event.identifier)}>
+                Reset
+            </Button> */}
+                                        </TableCell>
+                                    </TableRow>
+
+                                )
+                            })}
                     </TableBody>
                 </Table>
 
@@ -173,7 +232,7 @@ const EventsOverview = () => {
                 <span className="text-sm text-neutral-400">
                     <b>{total || 0}</b> found
                 </span>
-            </Card>
+            </Card >
         </>
     )
 }

@@ -1,9 +1,8 @@
 import withProtectedRoute from '@/components/hocs/withProtectedRoute'
 import Dashboard from '@/domain/dashboard/components'
 
-type Props = {}
 
-const DashbordPage = (props: Props) => {
+const DashbordPage = () => {
     return <Dashboard />
 }
 
