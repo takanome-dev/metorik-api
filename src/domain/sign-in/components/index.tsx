@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -6,13 +6,11 @@ import { useRouter } from 'next/router'
 import appwrite from '@/lib/appwrite'
 import { SessionContext } from '@/providers/session-provider'
 
-type Props = {}
-
-const SignIn = (props: Props) => {
+const SignIn = () => {
     const { query, push } = useRouter()
     const { isLogged } = useContext(SessionContext)
 
-    const signInWithGitHub = () => {
+    const signInWithGitHub = async () => {
         appwrite.account.createOAuth2Session(
             'github',
             'http://localhost:3000/a/dashboard',

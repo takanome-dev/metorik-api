@@ -5,10 +5,6 @@ export type TemplateProps = {
     className?: string
 }
 
-const DefaultTemplate = ({ children, className }: TemplateProps) => (
-    <div role="main" className={className}>
-        {children}
-    </div>
-)
+const DefaultTemplate = ({ children, className }: TemplateProps) => <div className={className}>{children}</div>
 
 export default DefaultTemplate

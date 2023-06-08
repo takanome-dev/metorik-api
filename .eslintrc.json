@@ -4,6 +4,7 @@
     "simple-import-sort"
   ],
   "rules": {
+    "react/no-unescaped-entities": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": [
       "error",

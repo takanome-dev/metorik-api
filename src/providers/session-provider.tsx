@@ -1,12 +1,14 @@
-import { createContext, useEffect, useReducer } from 'react'
+import { createContext, useEffect, useReducer, useState } from 'react'
 import type { Models } from 'appwrite/types'
 
 import appwrite from '@/lib/appwrite'
+import { createJWT } from '@/utils/api'
 type SessionProviderContext = {
     session: Models.Session | null
     user: Models.User<{}> | null
     loading: boolean
     isLogged: boolean
+    dispatch?: React.Dispatch<Action>
     reset: () => void
 }
 
@@ -15,6 +17,7 @@ const initialContext: SessionProviderContext = {
     user: null,
     loading: true,
     isLogged: false,
+    dispatch: () => {},
     reset: () => {},
 }
 
@@ -60,6 +63,10 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
     const [state, dispatch] = useReducer(reducer, initialContext)
 
     useEffect(() => {
+        if (!localStorage.getItem('jwt')) {
+            return
+        }
+
         const initSession = async () => {
             const session = await appwrite.account.getSession('current')
             if (!session) {
@@ -84,15 +91,22 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
     }, [])
 
     useEffect(() => {
+        if (!localStorage.getItem('jwt')) {
+            return
+        }
+
         const isLogged = !!state.session && !!state.user
         dispatch({ type: 'SET_IS_LOGGED', payload: isLogged })
+        if (!isLogged) return
         dispatch({ type: 'SET_LOADING', payload: false })
     }, [state.session, state.user])
 
+    console.log(state)
     return (
         <SessionContext.Provider
             value={{
                 ...state,
+                dispatch,
                 reset: () => dispatch({ type: 'RESET' }),
             }}
         >
