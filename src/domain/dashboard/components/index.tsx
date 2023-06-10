@@ -1,60 +1,80 @@
+import { Card, Metric, SelectBox, SelectBoxItem, Text } from '@tremor/react'
 import { useContext } from 'react'
-import { Card, Metric, Text } from '@tremor/react'
-import { IconStar } from 'tabler-icons'
 
 import withTemplate from '@/components/hocs/withTemplate'
+import BodyCard from '@/components/ui/BodyCard/BodyCard'
+import { Event } from '@/domain/events/schemas/events'
+import { useEvents } from '@/domain/shared/use-events'
 import { SessionContext } from '@/providers/session-provider'
 import { AppTemplate } from '@/templates/App.template'
-import { useEvents } from '@/domain/shared/use-events'
-import { Event } from '@/domain/events/schemas/events'
-
+import { Controller } from 'react-hook-form'
 
 type StateDrivenCardProps = {
-    type: Event["type"]
+    type: Event['type']
     data: Event
 }
 
+
 const StateDrivenCard = ({ type, data }: StateDrivenCardProps) => {
     switch (type) {
-        case "numeric":
+        case 'numeric':
         default:
             return (
-                <Card className="max-w-xs mx-auto relative" decoration="top" decorationColor="pink">
-                    <Text>{data.title}</Text>
-                    <Metric>{data.value}</Metric>
+                <Card className="max-w-xs flex flex-col justify-end mx-auto relative" decoration="top" decorationColor="pink">
+                    <Text className="flex-1">{data.title}</Text>
+                    <Metric >{data.value}</Metric>
                 </Card>
             )
     }
 }
 
+const SkeletonCard = () => (
+    <div className="w-full h-full sm:min-h-[96px] xl:min-h-[128px] border-t-4 border-t-pink-400 bg-neutral-100 border p-4 border-neutral-200 animate-pulse rounded-lg" />
+)
 
 const Dashboard = () => {
     const { user } = useContext(SessionContext)
-    const { eventsQuery } = useEvents()
+    const { eventsQuery, form } = useEvents()
     const events = eventsQuery.data?.documents
     const total = eventsQuery.data?.total
 
     return (
-        <div className="flex flex-col h-full">
-            <h3 className="text-xl text-neutral-600 font-semibold">Glad to see you, {user?.name}</h3>
-            <p className="text-sm text-neutral-400">This your dashboard, you can visualize your events data here.</p>
-            <br className="my-4" />
-            <div className="flex flex-col mb-3">
-                <div className="flex items-center text-neutral-600 gap-x-2">
-                    <IconStar className="w-4 h-4" />
-                    <h4 className="text-lg tracking-tight ">
-                        Favorites <small className="text-xs text-neutral-400">(4/4)</small>
-                    </h4>
-                </div>
-                <p className="text-sm text-neutral-400">You can add up to 4 favorites events.</p>
-            </div>
+        <BodyCard
+            heading='Dashboard'
+            description={`Glad to see you, ${user?.name}, you have ${total} events!`}
+            header={
+                <Controller
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                        <div className="ml-auto">
+
+                            <SelectBox
+                                placeholder="Select a time frame"
+                                value={field.value}
+                                onValueChange={field.onChange}
+                            >
+                                <SelectBoxItem value='today' text="Today" />
+                                <SelectBoxItem value='week' text="Lasts 7 days" />
+                                <SelectBoxItem value='month' text="Lasts 30 days" />
+                            </SelectBox>
+                        </div>
+
+                    )}
+                />}
+        >
 
             <div className="grid grid-cols-4 gap-8">
-                {events?.map((event) => (
+                {!eventsQuery.isLoading && events?.map((event) => (
                     <StateDrivenCard key={event.$id} type={event.type} data={event} />
                 ))}
+                {
+                    eventsQuery.isLoading && Array.from({ length: 4 }).map((_, index) => (
+                        <SkeletonCard key={index} />
+                    ))
+                }
             </div>
-        </div>
+        </BodyCard>
     )
 }
 

@@ -1,16 +1,16 @@
+import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 import { Dialog } from '@headlessui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, SelectBox, SelectBoxItem, Text, TextInput } from '@tremor/react'
 import { motion } from 'framer-motion'
-import { Controller, useForm } from 'react-hook-form'
+import { HTTPError } from 'ky'
 import { IconChartBar, IconChartLine, IconMath } from 'tabler-icons'
 
+import { useEvents } from '@/domain/shared/use-events'
 import { fadeIn } from '@/utils/animations'
 
-import { HTTPError } from 'ky'
-import { toast } from 'react-hot-toast'
 import { CreateEventInput, CreateEventSchema } from '../../schemas/events'
-import { useEvents } from '@/domain/shared/use-events'
 
 type ModalProps = {
     isOpen: boolean
@@ -24,7 +24,7 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
     const form = useForm<FormValues>({
         mode: 'onChange',
         defaultValues: {
-            type: "numeric"
+            type: 'numeric',
         },
         resolver: zodResolver(CreateEventSchema),
     })
@@ -37,14 +37,13 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
             onClose()
         } catch (err) {
             if (err instanceof HTTPError) {
-                const { error } = await err.response.json() as { error: string }
+                const { error } = (await err.response.json()) as { error: string }
                 toast.error(error)
                 return
             }
             toast.error('An error has occured while creating the event.')
         }
     })
-
 
     return (
         <Dialog
@@ -78,9 +77,7 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
                     <div className="flex flex-col gap-y-1">
                         <div>
                             <Text className="text-sm">Description</Text>
-                            <Text className="text-xs text-neutral-400">
-                                Optional
-                            </Text>
+                            <Text className="text-xs text-neutral-400">Optional</Text>
                         </div>
                         <TextInput
                             error={!!form.formState.errors.description?.message}
@@ -94,7 +91,8 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
                         <div>
                             <Text className="text-sm">Identifier</Text>
                             <Text className="text-xs text-neutral-400">
-                                A <b className="underline underline-offset-1">unique</b> identifier that you'll need to dispatch on your API.
+                                A <b className="underline underline-offset-1">unique</b> identifier that you'll need to
+                                dispatch on your API.
                             </Text>
                         </div>
                         <TextInput
@@ -132,7 +130,11 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
                     </div>
 
                     <dd className="w-full flex items-center justify-end gap-x-8">
-                        <Button type="button" color="gray" variant="light" size="xs"
+                        <Button
+                            type="button"
+                            color="gray"
+                            variant="light"
+                            size="xs"
                             onClick={onClose}
                             disabled={createEventMutation.isLoading}
                         >
@@ -141,7 +143,11 @@ const CreateEventModal = ({ isOpen, onClose }: ModalProps) => {
                         <Button
                             disabled={!form.formState.isValid || createEventMutation.isLoading}
                             loading={createEventMutation.isLoading}
-                            type="submit" color="pink" variant="primary" size="xs">
+                            type="submit"
+                            color="pink"
+                            variant="primary"
+                            size="xs"
+                        >
                             Create
                         </Button>
                     </dd>

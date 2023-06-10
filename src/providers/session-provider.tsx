@@ -17,8 +17,8 @@ const initialContext: SessionProviderContext = {
     user: null,
     loading: true,
     isLogged: false,
-    dispatch: () => {},
-    reset: () => {},
+    dispatch: () => { },
+    reset: () => { },
 }
 
 export const SessionContext = createContext<SessionProviderContext>(initialContext)
@@ -68,21 +68,32 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
         }
 
         const initSession = async () => {
-            const session = await appwrite.account.getSession('current')
-            if (!session) {
-                dispatch({ type: 'SET_SESSION', payload: null })
-                return
+            try {
+
+                const session = await appwrite.account.getSession('current')
+                if (!session) {
+                    dispatch({ type: 'SET_SESSION', payload: null })
+                    return
+                }
+                dispatch({ type: 'SET_SESSION', payload: session })
+            } catch (err) {
+                console.error("Error getting session", err)
+                localStorage.removeItem('jwt')
             }
-            dispatch({ type: 'SET_SESSION', payload: session })
         }
 
         const initUser = async () => {
-            const user = await appwrite.account.get()
-            if (!user) {
-                dispatch({ type: 'SET_USER', payload: null })
-                return
+            try {
+                const user = await appwrite.account.get()
+                if (!user) {
+                    dispatch({ type: 'SET_USER', payload: null })
+                    return
+                }
+                dispatch({ type: 'SET_USER', payload: user })
+            } catch (error) {
+                localStorage.removeItem('jwt')
             }
-            dispatch({ type: 'SET_USER', payload: user })
+
         }
 
         initSession()

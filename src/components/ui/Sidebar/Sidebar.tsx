@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { IconGridDots, IconLogout, IconSettings, IconSpeakerphone } from 'tabler-icons'
+import { IconGridDots, IconKey, IconLogout, IconSettings, IconSpeakerphone } from 'tabler-icons'
 
 type Props = {}
 
@@ -56,16 +56,16 @@ const Sidebar = (props: Props) => {
                                     }
                                     label="Events"
                                 />
+                                <NavItem
+                                    href="/a/keys"
+                                    icon={
+                                        <IconKey className="w-4 h-4 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
+                                    }
+                                    label="Keys"
+                                />
                             </ul>
                         </li>
                         <div className="flex-1 justify-end  w-full flex flex-col mt-auto gap-y-2">
-                            <NavItem
-                                href="/a/settings"
-                                icon={
-                                    <IconSettings className="w-4 h-4 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
-                                }
-                                label="Settings"
-                            />
                             <NavItem
                                 href="/logout"
                                 icon={

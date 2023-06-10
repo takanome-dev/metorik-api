@@ -5,5 +5,6 @@ declare namespace NodeJS {
         NEXT_PUBLIC_APPWRITE_PROJECT_ID: string
         NEXT_PUBLIC_APPWRITE_DATABASE_ID: string
         APPWRITE_API_KEY: string
+        JWT_SECRET: string
     }
 }
