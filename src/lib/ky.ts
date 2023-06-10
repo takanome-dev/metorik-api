@@ -2,6 +2,7 @@ import ky_ from 'ky'
 
 const ky = ky_.create({
     credentials: 'include',
+    cache: 'no-store',
     hooks: {
         beforeRequest: [
             async (options) => {
@@ -18,7 +19,6 @@ const ky = ky_.create({
         ],
         afterResponse: [
             async (request, options, response) => {
-                console.log('KY RESPONSE', response)
                 const jwt = localStorage.getItem('jwt')
                 if (jwt) {
                     const [, payload] = jwt.split('.')
@@ -38,12 +38,7 @@ const ky = ky_.create({
                     window.location.href = '/sign-in'
                 }
             },
-        ],
-        beforeRetry: [
-            async (options) => {
-                console.log('KY RETRY', options)
-            },
-        ],
+        ]
     },
 })
 

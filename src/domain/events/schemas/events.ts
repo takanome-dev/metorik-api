@@ -15,6 +15,12 @@ export type Event = {
     value?: number
 }
 
+export const ListEventsSchema = z.object({
+    time: z.enum(["today", "week", "month"])
+})
+
+export type ListEventsInput = z.infer<typeof ListEventsSchema>
+
 export const CreateEventSchema = z.object({
     title: z.string().min(3).max(255),
     identifier: z.string().min(3).max(255),

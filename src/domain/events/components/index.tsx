@@ -1,21 +1,30 @@
-import { Button, Card, Divider, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from '@tremor/react'
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
+import { Menu } from '@headlessui/react'
+import {
+    Button,
+    Card,
+    Divider,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeaderCell,
+    TableRow,
+    Text,
+} from '@tremor/react'
 import { IconBolt, IconDots, IconHelp, IconPlus, IconRefresh } from 'tabler-icons'
 
 import withTemplate from '@/components/hocs/withTemplate'
-import { AppTemplate } from '@/templates/App.template'
-
 import BodyCard from '@/components/ui/BodyCard/BodyCard'
 import { useEvents } from '@/domain/shared/use-events'
-import { Menu } from '@headlessui/react'
-import { toast } from 'react-hot-toast'
+import { AppTemplate } from '@/templates/App.template'
+
 import CreateEventModal from './new/create-event-modal'
 
-
-
 const cardProps = {
-    heading: "Events",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.",
+    heading: 'Events',
+    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.',
 }
 
 const EventsOverview = () => {
@@ -27,19 +36,19 @@ const EventsOverview = () => {
     const onDispatchEvent = async (event: string) => {
         try {
             await dispatchEventMutation.mutateAsync(event)
-            toast.success("Event dispatched successfully")
+            toast.success('Event dispatched successfully')
         } catch (err) {
-            toast.error("An error has occured while dispatching event")
+            toast.error('An error has occured while dispatching event')
         }
     }
 
     const onResetEvent = async (identifier: string) => {
         try {
             await resetEventMutation.mutateAsync(identifier)
-            toast.success("Event reset successfully")
+            toast.success('Event reset successfully')
             await invalidate()
         } catch (err) {
-            toast.error("An error has occured while resetting event")
+            toast.error('An error has occured while resetting event')
         }
     }
 
@@ -47,9 +56,7 @@ const EventsOverview = () => {
         return (
             <BodyCard {...cardProps}>
                 <div className="flex items-center justify-center w-full h-full">
-                    <Text>
-                        An error has occured while fetching events.{' '}
-                    </Text>
+                    <Text>An error has occured while fetching events. </Text>
                     <Button
                         className="ml-2"
                         variant="secondary"
@@ -61,7 +68,6 @@ const EventsOverview = () => {
                     </Button>
                 </div>
             </BodyCard>
-
         )
     }
 
@@ -69,13 +75,10 @@ const EventsOverview = () => {
         return (
             <BodyCard {...cardProps}>
                 <div className="flex items-center justify-center w-full h-full">
-                    <Text>
-                        Loading events...
-                    </Text>
+                    <Text>Loading events...</Text>
                 </div>
             </BodyCard>
         )
-
     }
 
     if (!documents?.length) {
@@ -86,11 +89,10 @@ const EventsOverview = () => {
                 <BodyCard {...cardProps}>
                     <div className="flex flex-col items-center justify-center h-full w-full">
                         <div className="max-w-xs text-center">
-                            <Text className="text-lg font-semibold text-neutral-400">
-                                No events found
-                            </Text>
+                            <Text className="text-lg font-semibold text-neutral-400">No events found</Text>
                             <Text className="text-sm leading-8 text-neutral-400">
-                                Create an event to get started : <Button
+                                Create an event to get started :{' '}
+                                <Button
                                     className="ml-2"
                                     variant="secondary"
                                     color="pink"
@@ -101,11 +103,9 @@ const EventsOverview = () => {
                                 </Button>
                             </Text>
                         </div>
-
                     </div>
                 </BodyCard>
             </>
-
         )
     }
 
@@ -146,15 +146,20 @@ const EventsOverview = () => {
                         <TableHeaderCell></TableHeaderCell>
                     </TableHead>
                     <TableBody>
-                        {!!documents?.length
-                            && documents.map((event) => {
-                                const isDispatching = dispatchEventMutation.isLoading && dispatchEventMutation.variables === event.identifier
-                                const isResetting = resetEventMutation.isLoading && resetEventMutation.variables === event.identifier
+                        {!!documents?.length &&
+                            documents.map((event) => {
+                                const isDispatching =
+                                    dispatchEventMutation.isLoading &&
+                                    dispatchEventMutation.variables === event.identifier
+                                const isResetting =
+                                    resetEventMutation.isLoading && resetEventMutation.variables === event.identifier
                                 const isProcessing = isDispatching || isResetting
 
                                 return (
-
-                                    <TableRow key={event.$id} className={`${isProcessing && 'blur'} transition-all duration-300 ease-out`}>
+                                    <TableRow
+                                        key={event.$id}
+                                        className={`${isProcessing && 'blur'} transition-all duration-300 ease-out`}
+                                    >
                                         <TableCell>{event.title}</TableCell>
                                         <TableCell>
                                             <kbd className="bg-neutral-100 text-neutral-400 p-1 rounded shadow-sm">
@@ -180,7 +185,9 @@ const EventsOverview = () => {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => onDispatchEvent(event.identifier)}
-                                                                className={`${active && 'bg-neutral-50'} px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                                                className={`${
+                                                                    active && 'bg-neutral-50'
+                                                                } px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
                                                             >
                                                                 <IconBolt className="w-4 h-4 mr-2 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
                                                                 Dispatch
@@ -194,7 +201,9 @@ const EventsOverview = () => {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => onResetEvent(event.identifier)}
-                                                                className={`${active && 'bg-red-50 text-red-400'}  px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                                                className={`${
+                                                                    active && 'bg-red-50 text-red-400'
+                                                                }  px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
                                                             >
                                                                 <IconRefresh className="w-4 h-4 mr-2 group-hover:-rotate-12 transition-transform duration-300 ease-in-out" />
                                                                 Reset
@@ -222,17 +231,15 @@ const EventsOverview = () => {
             </Button> */}
                                         </TableCell>
                                     </TableRow>
-
                                 )
                             })}
                     </TableBody>
                 </Table>
 
-
                 <span className="text-sm text-neutral-400">
                     <b>{total || 0}</b> found
                 </span>
-            </Card >
+            </Card>
         </>
     )
 }

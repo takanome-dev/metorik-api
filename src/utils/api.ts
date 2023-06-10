@@ -22,3 +22,4 @@ export type ApiGetResponse<T> = {
     documents: T[]
     total: number
 }
+

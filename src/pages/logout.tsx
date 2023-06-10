@@ -4,6 +4,7 @@ import appwrite from '@/lib/appwrite'
 
 const LogoutPage = () => {
     useEffect(() => {
+        localStorage.removeItem('jwt')
         appwrite.account.deleteSession('current').then(() => (window.location.href = '/'))
     }, [])
 

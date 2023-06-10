@@ -1,13 +1,17 @@
 import { AppwriteException, Query } from 'appwrite'
+import type { Request, Response } from 'express'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { CreateEventSchema, Event } from '@/domain/events/schemas/events'
 import appwrite, { AppwriteCollections, DATABASE_ID } from '@/lib/appwrite'
 import { ApiGetResponse, presetJWT } from '@/utils/api'
+import { middlewares } from '@/utils/api-middlewares'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req
-
+    await Promise.all(
+        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => { }))
+    )
     if (method === 'GET') {
         presetJWT(req, res)
         const userLogged = await appwrite.account.get()
@@ -15,15 +19,39 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(401).json({ error: 'Unauthorized | NO USER LOGGED' })
         }
 
-        const events = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS, [
+
+        // get the params from the query : ?time=value
+        const { time } = req.query
+
+        const events = (await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS, [
             Query.equal('user_id', userLogged.$id),
-        ]) as unknown as ApiGetResponse<Event>
+        ])) as unknown as ApiGetResponse<Event>
+
 
         for (const event of events.documents) {
-            const eventData = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, [
+            const datas = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, [
                 Query.equal('event_id', event.$id),
             ])
-            const value = eventData.documents[0].value
+
+            // filter the datas by time
+
+            const eventFilteredByTime = datas.documents.filter((event) => {
+                const eventDate = new Date(event.$createdAt)
+
+                switch (time) {
+                    case 'today':
+                        return eventDate.getDate() === new Date().getDate()
+                    case 'week':
+                        return eventDate.getDate() >= new Date().getDate() - 7
+                    case 'month':
+                        return eventDate.getDate() >= new Date().getDate() - 30
+                    default:
+                        return true
+                }
+            })
+
+
+            const value = (eventFilteredByTime.at(0))?.value as string | undefined
             event.value = value ? parseInt(value) : 0
         }
         return res.status(200).json(events)
@@ -42,7 +70,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }
 
             const { data } = validated
-
 
             const foundEvents = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS, [
                 Query.equal('identifier', data.identifier),
@@ -65,15 +92,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             )
 
-            await appwrite.database.createDocument(
-                DATABASE_ID,
-                AppwriteCollections.EVENTS_HAS_DATA,
-                'unique()',
-                {
-                    event_id: savedEvent.$id,
-                    value: 0 // default value
-                }
-            )
+            await appwrite.database.createDocument(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, 'unique()', {
+                event_id: savedEvent.$id,
+                value: 0, // default value
+            })
 
             return res.status(200).json({
                 ...savedEvent,

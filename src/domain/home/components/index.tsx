@@ -14,14 +14,14 @@ const Home = (props: Props) => {
                         <div className="hidden sm:mt-32 sm:flex lg:mt-16">
                             <div className="relative px-3 py-1 text-sm leading-6 text-gray-500 rounded-full ring-1 ring-gray-900/10 hover:ring-gray-900/20">
                                 Get Started Today and Optimize Your API Performance{' '}
-                                <a href="#" className="font-semibold text-rose-600 whitespace-nowrap">
+                                <a href="#" className="font-semibold text-pink-600 whitespace-nowrap">
                                     <span className="absolute inset-0" aria-hidden="true" />
                                     Start free <span aria-hidden="true">&rarr;</span>
                                 </a>
                             </div>
                         </div>
                         <h1 className="mt-24 text-4xl font-bold tracking-tight text-gray-900 sm:mt-10 sm:text-6xl">
-                            Unlock the Power of API Analytics with <span className="text-rose-400">Metorik-API</span>
+                            Unlock the Power of API Analytics with <span className="text-pink-400">Metorik-API</span>
                         </h1>
                         <p className="mt-6 text-lg leading-8 text-gray-600">
                             Uncover Actionable Insights, Track Key Metrics, and Optimize Your API Performance with
@@ -31,7 +31,7 @@ const Home = (props: Props) => {
                         <div className="flex items-center mt-10 gap-x-6">
                             <Link
                                 href="/sign-in"
-                                className="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
+                                className="rounded-md bg-pink-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600"
                             >
                                 Get started
                             </Link>
