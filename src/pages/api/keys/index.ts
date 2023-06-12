@@ -35,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 )
 
                 if (!!foundKeyByUserId.total) {
-                    return res.status(400).json({ error: 'User already has a key' })
+                    return res.status(429).json({ error: 'User already has a key' })
                 }
 
                 const token = jwt.sign({ id: userLogged.$id }, process.env.JWT_SECRET, { expiresIn: '365d' })

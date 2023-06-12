@@ -20,6 +20,10 @@ export default class EventsService {
         return json
     }
 
+    static async delete(identifier: string): Promise<void> {
+        await ky.delete(`/api/events/${identifier}`)
+    }
+
     static async dispatch(identifier: string): Promise<void> {
         await ky.post(`/api/events/${identifier}`)
     }

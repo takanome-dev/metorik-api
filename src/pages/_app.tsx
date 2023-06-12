@@ -10,6 +10,10 @@ import defaultSeo from '../../next-seo.config'
 
 import '../styles/globals.css'
 
+if (process.env.NODE_ENV === 'production') {
+    console.log = () => {}
+}
+
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <QueryClientProvider client={queryClient}>

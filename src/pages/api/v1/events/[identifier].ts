@@ -82,7 +82,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
     }
 
-    res.status(200).json({
+    return res.status(200).json({
         message: `${identifier} has been dispatched`,
         metadata: {
             value: foundEventWithDataToday.value ? foundEventWithDataToday.value + 1 : 1,

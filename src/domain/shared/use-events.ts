@@ -28,6 +28,12 @@ export const useEvents = () => {
         await EventsService.dispatch(identifier)
         await invalidate()
     })
+
+    const deleteEventMutation = useMutation(async (identifier: string) => {
+        await EventsService.delete(identifier)
+        await invalidate()
+    })
+
     const resetEventMutation = useMutation(async (identifier: string) => {
         await EventsService.reset(identifier)
         await invalidate()
@@ -43,6 +49,7 @@ export const useEvents = () => {
         createEventMutation,
         resetEventMutation,
         dispatchEventMutation,
+        deleteEventMutation,
         invalidate,
         form,
     }
