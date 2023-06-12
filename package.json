@@ -1,5 +1,5 @@
 {
-  "name": "metorik-api",
+  "name": "metorik",
   "description": "A web-app for the Appwrite X Hashnode hackathon",
   "version": "1.0.0",
   "private": true,

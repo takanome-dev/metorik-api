@@ -27,12 +27,8 @@ const Sidebar = (props: Props) => {
         <div className="lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="flex flex-col px-6 pb-4 overflow-y-auto bg-white border-r border-r-neutral-200 shadow-sm z-10 grow gap-y-5">
-                <div
-                    className="flex flex-col items-center my-4 rounded-xl"
-                    title="METORIK API"
-                    aria-label="Metorik API logo"
-                >
-                    <Image width={500} height={500} className="w-auto h-32" src="/logo.png" alt="METORIK-API" />
+                <div className="flex flex-col items-center my-4 rounded-xl" title="METORIK" aria-label="Metorik logo">
+                    <Image width={500} height={500} className="w-auto h-32" src="/logo.png" alt="METORIK" />
                 </div>
                 <nav className="flex flex-col flex-1">
                     <ul role="list" className="flex flex-col flex-1 gap-y-7">

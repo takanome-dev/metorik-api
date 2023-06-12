@@ -10,7 +10,7 @@ import { useKeys } from './use-keys'
 
 const metaProps = {
     heading: 'API Keys',
-    description: 'Generate an API key to use with the Metorik API',
+    description: 'Generate an API key to use with the Metorik',
 }
 
 export const KeysOverview = () => {
@@ -72,8 +72,9 @@ export const KeysOverview = () => {
         >
             {!!keys?.length ? (
                 <div
-                    className={`w-full flex-col ${deleteKeyMutation.isLoading && 'blur-lg'
-                        } transition-all duration-300 ease-in-out`}
+                    className={`w-full flex-col ${
+                        deleteKeyMutation.isLoading && 'blur-lg'
+                    } transition-all duration-300 ease-in-out`}
                 >
                     <div className="w-full flex items-center justify-between">
                         <Text className="text-sm font-semibold">Active API key</Text>
@@ -88,8 +89,9 @@ export const KeysOverview = () => {
                                         <button
                                             type="button"
                                             onClick={onCopy}
-                                            className={`${active && 'bg-neutral-50'
-                                                } px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                            className={`${
+                                                active && 'bg-neutral-50'
+                                            } px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
                                         >
                                             {copied ? (
                                                 <>
@@ -112,8 +114,9 @@ export const KeysOverview = () => {
                                         <button
                                             type="button"
                                             onClick={onDelete}
-                                            className={`${active && 'bg-red-50 text-red-400'
-                                                }  px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
+                                            className={`${
+                                                active && 'bg-red-50 text-red-400'
+                                            }  px-2.5 py-1.5 transition-all duration-300 ease-in-out hover:pl-2 flex items-center gap-x-2 rounded group`}
                                         >
                                             <IconTrash className="w-4 h-4 mr-2 group-hover:-rotate-12 transition-transform duration-300 ease-in-out" />
                                             Delete

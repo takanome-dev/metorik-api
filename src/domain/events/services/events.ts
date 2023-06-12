@@ -4,7 +4,7 @@ import { ApiGetResponse, getJWT } from '@/utils/api'
 import { CreateEventInput, Event, ListEventsInput } from '../schemas/events'
 
 export default class EventsService {
-    static async list({ time = "today" }: ListEventsInput): Promise<ApiGetResponse<Event>> {
+    static async list({ time = 'today' }: ListEventsInput): Promise<ApiGetResponse<Event>> {
         const json = (await ky.get(`/api/events?time=${time}`).json()) as ApiGetResponse<Event>
         return json
     }
