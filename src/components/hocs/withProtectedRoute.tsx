@@ -29,7 +29,6 @@ export default function withProtectedRoute<P extends object>(Component: Componen
             }
 
             const interval = setInterval(async () => {
-                console.log('interval running')
                 if (times > 3) {
                     setIsLoading(false)
                     window.location.href = '/sign-in'
@@ -40,19 +39,16 @@ export default function withProtectedRoute<P extends object>(Component: Componen
                     if (user) {
                         const jwtStorage = localStorage.getItem('jwt')
                         if (jwtStorage) {
-                            console.log('jwt already created')
                             setIsLoading(false)
                             clearInterval(interval)
                             setTimes(0)
                             return
                         }
-                        console.log('#49 - jwt not created')
                         const { jwt } = await createJWT()
                         localStorage.setItem('jwt', jwt)
                         clearInterval(interval)
                     }
                 } else {
-                    console.log('no session, now checking')
                     const sessionTemp = await appwrite.account.getSession('current')
 
                     if (!sessionTemp) {
@@ -80,10 +76,8 @@ export default function withProtectedRoute<P extends object>(Component: Componen
                         if (jwtStorage) {
                             return
                         }
-                        console.log('#82 - jwt not created')
                         const { jwt } = await createJWT()
                         localStorage.setItem('jwt', jwt)
-                        console.log('jwt created')
                         clearInterval(interval)
                         setTimes(0)
                     }

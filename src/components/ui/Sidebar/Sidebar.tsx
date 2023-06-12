@@ -1,28 +1,33 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { IconGridDots, IconKey, IconLogout, IconSettings, IconSpeakerphone } from 'tabler-icons'
-
-type Props = {}
+import { IconBrandGithub, IconBrandTwitter, IconGridDots, IconKey, IconLogout, IconSpeakerphone } from 'tabler-icons'
 
 type NavItemProps = {
     href: string
     icon: React.ReactNode
     label: string
+    external?: boolean
 }
-const NavItem = ({ href, icon, label }: NavItemProps) => (
-    <li title={label} aria-label={label}>
-        <Link
-            href={href}
-            className="flex group items-center p-2 -mx-2 text-sm font-semibold leading-6 text-neutral-400 rounded-md group gap-x-3 hover:bg-neutral-100 hover:pl-4 transition-all duration-200 ease-out"
-        >
-            {icon}
-            {label}
-        </Link>
-    </li>
-)
+const NavItem = ({ href, icon, label, external }: NavItemProps) => {
+    const Anchor = external ? 'a' : Link
+    const externalProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
-const Sidebar = (props: Props) => {
+    return (
+        <li title={label} aria-label={label}>
+            <Anchor
+                href={href}
+                className="flex group items-center p-2 -mx-2 text-sm font-semibold leading-6 text-neutral-400 rounded-md group gap-x-3 hover:bg-neutral-100 hover:pl-4 transition-all duration-200 ease-out"
+                {...externalProps}
+            >
+                {icon}
+                {label}
+            </Anchor>
+        </li>
+    )
+}
+
+const Sidebar = () => {
     return (
         <div className="lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
             {/* Sidebar component, swap this element with another sidebar if you like */}
@@ -62,6 +67,22 @@ const Sidebar = (props: Props) => {
                             </ul>
                         </li>
                         <div className="flex-1 justify-end  w-full flex flex-col mt-auto gap-y-2">
+                            <NavItem
+                                external
+                                href="https://github.com/adevinwild"
+                                icon={
+                                    <IconBrandGithub className="w-4 h-4 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
+                                }
+                                label="GitHub"
+                            />
+                            <NavItem
+                                external
+                                href="https://twitter.com/adevinwild"
+                                icon={
+                                    <IconBrandTwitter className="w-4 h-4 group-hover:-rotate-12 transition-all duration-300 ease-in-out" />
+                                }
+                                label="Twitter"
+                            />
                             <NavItem
                                 href="/logout"
                                 icon={

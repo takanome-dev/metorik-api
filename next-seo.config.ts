@@ -2,7 +2,7 @@ import { DefaultSeoProps } from 'next-seo'
 
 const APP_NAME = 'Metorik'
 const APP_DESCRIPTION = 'Metorik is a tool that will help you track and analyze your API usage by dispatching events in your server code.'
-const APP_URL = 'https://metorik.vercel.app'
+const APP_URL = process.env.NEXT_PUBLIC_PROD_URL || 'https://metorik.vercel.app'
 
 const config: DefaultSeoProps = {
   titleTemplate: `%s | ${APP_NAME}`,

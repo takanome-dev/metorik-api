@@ -3,11 +3,11 @@ import rateLimit from 'express-rate-limit'
 import slowDown from 'express-slow-down'
 
 const getIP = (request: Request) =>
-  request.ip ||
-  request.headers['x-forwarded-for'] ||
-  request.headers['x-real-ip'] ||
-  request.connection.remoteAddress ||
-  ''
+    request.ip ||
+    request.headers['x-forwarded-for'] ||
+    request.headers['x-real-ip'] ||
+    request.connection.remoteAddress ||
+    ''
 
 const limit = 10
 
@@ -16,6 +16,6 @@ const delayAfter = Math.round(limit / 2) // begin slowing down responses after t
 const delayMs = 500 // slow down subsequent responses by 500 milliseconds per request
 
 export const middlewares = [
-  slowDown({ keyGenerator: getIP as any, windowMs, delayAfter, delayMs }),
-  rateLimit({ keyGenerator: getIP as any, windowMs, max: limit }),
+    slowDown({ keyGenerator: getIP as any, windowMs, delayAfter, delayMs }),
+    rateLimit({ keyGenerator: getIP as any, windowMs, max: limit }),
 ]
