@@ -16,7 +16,7 @@ const dbs = new Databases(sdk)
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req
     await Promise.all(
-        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => { }))
+        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => {}))
     )
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST'])
@@ -31,9 +31,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const parsedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf-8')) as {
-        "id": string,
-        "iat": number,
-        "exp": number
+        id: string
+        iat: number
+        exp: number
     }
 
     const verifiedToken = jwt.verify(token, process.env.JWT_SECRET)
@@ -41,7 +41,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (!verifiedToken) {
         return res.status(401).json({ message: 'Unauthorized' })
     }
-
 
     // check expiration
     const now = Math.floor(Date.now() / 1000)
@@ -73,14 +72,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }) as unknown as Event
 
     if (foundEventWithDataToday) {
-        await dbs.updateDocument(
-            DATABASE_ID,
-            AppwriteCollections.EVENTS_HAS_DATA,
-            foundEventWithDataToday.$id,
-            {
-                value: foundEventWithDataToday.value ? foundEventWithDataToday.value + 1 : 1,
-            }
-        )
+        await dbs.updateDocument(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, foundEventWithDataToday.$id, {
+            value: foundEventWithDataToday.value ? foundEventWithDataToday.value + 1 : 1,
+        })
     } else {
         await dbs.createDocument(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, 'unique()', {
             event_id: event.$id,
@@ -89,8 +83,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     res.status(200).json({
-        message: `${identifier} has been dispatched`, metadata: {
+        message: `${identifier} has been dispatched`,
+        metadata: {
             value: foundEventWithDataToday.value ? foundEventWithDataToday.value + 1 : 1,
-        }
+        },
     })
 }

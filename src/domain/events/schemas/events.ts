@@ -16,7 +16,7 @@ export type Event = {
 }
 
 export const ListEventsSchema = z.object({
-    time: z.enum(["today", "week", "month"])
+    time: z.enum(['today', 'week', 'month']),
 })
 
 export type ListEventsInput = z.infer<typeof ListEventsSchema>

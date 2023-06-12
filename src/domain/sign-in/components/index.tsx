@@ -33,7 +33,7 @@ const SignIn = () => {
         <>
             <div className="flex flex-col justify-center flex-1 min-h-full py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <Image width={500} height={500} className="w-auto h-32 mx-auto" src="/logo.png" alt="METORIK-API" />
+                    <Image width={500} height={500} className="w-auto h-32 mx-auto" src="/logo.png" alt="METORIK" />
                     <h2 className="mt-6 text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
                         Sign in to your account
                     </h2>
@@ -57,7 +57,7 @@ const SignIn = () => {
                                     <span className="text-sm font-semibold leading-6">GitHub</span>
                                 </button>
                                 <p className="text-sm text-center text-neutral-400">
-                                    Get started with Metorik-API today and start tracking your API usage.
+                                    Get started with Metorik today and start tracking your API usage.
                                 </p>
                             </div>
                         </div>

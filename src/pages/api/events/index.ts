@@ -10,7 +10,7 @@ import { middlewares } from '@/utils/api-middlewares'
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req
     await Promise.all(
-        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => { }))
+        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => {}))
     )
     if (method === 'GET') {
         presetJWT(req, res)
@@ -19,14 +19,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(401).json({ error: 'Unauthorized | NO USER LOGGED' })
         }
 
-
         // get the params from the query : ?time=value
         const { time } = req.query
 
         const events = (await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS, [
             Query.equal('user_id', userLogged.$id),
         ])) as unknown as ApiGetResponse<Event>
-
 
         for (const event of events.documents) {
             const datas = await appwrite.database.listDocuments(DATABASE_ID, AppwriteCollections.EVENTS_HAS_DATA, [
@@ -50,8 +48,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             })
 
-
-            const value = (eventFilteredByTime.at(0))?.value as string | undefined
+            const value = eventFilteredByTime.at(0)?.value as string | undefined
             event.value = value ? parseInt(value) : 0
         }
         return res.status(200).json(events)

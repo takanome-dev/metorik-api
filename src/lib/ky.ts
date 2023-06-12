@@ -38,7 +38,7 @@ const ky = ky_.create({
                     window.location.href = '/sign-in'
                 }
             },
-        ]
+        ],
     },
 })
 

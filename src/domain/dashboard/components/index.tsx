@@ -1,5 +1,6 @@
-import { Card, Metric, SelectBox, SelectBoxItem, Text } from '@tremor/react'
 import { useContext } from 'react'
+import { Controller } from 'react-hook-form'
+import { Card, Metric, SelectBox, SelectBoxItem, Text } from '@tremor/react'
 
 import withTemplate from '@/components/hocs/withTemplate'
 import BodyCard from '@/components/ui/BodyCard/BodyCard'
@@ -7,22 +8,24 @@ import { Event } from '@/domain/events/schemas/events'
 import { useEvents } from '@/domain/shared/use-events'
 import { SessionContext } from '@/providers/session-provider'
 import { AppTemplate } from '@/templates/App.template'
-import { Controller } from 'react-hook-form'
 
 type StateDrivenCardProps = {
     type: Event['type']
     data: Event
 }
 
-
 const StateDrivenCard = ({ type, data }: StateDrivenCardProps) => {
     switch (type) {
         case 'numeric':
         default:
             return (
-                <Card className="max-w-xs flex flex-col justify-end mx-auto relative" decoration="top" decorationColor="pink">
+                <Card
+                    className="max-w-xs flex flex-col justify-end mx-auto relative"
+                    decoration="top"
+                    decorationColor="pink"
+                >
                     <Text className="flex-1">{data.title}</Text>
-                    <Metric >{data.value}</Metric>
+                    <Metric>{data.value}</Metric>
                 </Card>
             )
     }
@@ -40,7 +43,7 @@ const Dashboard = () => {
 
     return (
         <BodyCard
-            heading='Dashboard'
+            heading="Dashboard"
             description={`Glad to see you, ${user?.name}, you have ${total} events!`}
             header={
                 <Controller
@@ -48,31 +51,24 @@ const Dashboard = () => {
                     name="time"
                     render={({ field }) => (
                         <div className="ml-auto">
-
                             <SelectBox
                                 placeholder="Select a time frame"
                                 value={field.value}
                                 onValueChange={field.onChange}
                             >
-                                <SelectBoxItem value='today' text="Today" />
-                                <SelectBoxItem value='week' text="Lasts 7 days" />
-                                <SelectBoxItem value='month' text="Lasts 30 days" />
+                                <SelectBoxItem value="today" text="Today" />
+                                <SelectBoxItem value="week" text="Lasts 7 days" />
+                                <SelectBoxItem value="month" text="Lasts 30 days" />
                             </SelectBox>
                         </div>
-
                     )}
-                />}
+                />
+            }
         >
-
             <div className="grid grid-cols-4 gap-8">
-                {!eventsQuery.isLoading && events?.map((event) => (
-                    <StateDrivenCard key={event.$id} type={event.type} data={event} />
-                ))}
-                {
-                    eventsQuery.isLoading && Array.from({ length: 4 }).map((_, index) => (
-                        <SkeletonCard key={index} />
-                    ))
-                }
+                {!eventsQuery.isLoading &&
+                    events?.map((event) => <StateDrivenCard key={event.$id} type={event.type} data={event} />)}
+                {eventsQuery.isLoading && Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)}
             </div>
         </BodyCard>
     )

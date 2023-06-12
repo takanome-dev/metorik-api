@@ -17,9 +17,7 @@ export const presetJWT = (req: NextApiRequest, res: NextApiResponse) => {
     appwrite.account.client.setJWT(jwt)
 }
 
-
 export type ApiGetResponse<T> = {
     documents: T[]
     total: number
 }
-

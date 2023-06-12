@@ -9,7 +9,7 @@ import { middlewares } from '@/utils/api-middlewares'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     await Promise.all(
-        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => { }))
+        middlewares.map((middleware) => middleware(req as unknown as Request, res as unknown as Response, () => {}))
     )
     const { method } = req
     presetJWT(req, res)
